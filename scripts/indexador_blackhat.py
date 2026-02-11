@@ -1,37 +1,52 @@
 import os
-from langchain_community.document_loaders import PyMuPDFLoader
+from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
-# RUTAS ABSOLUTAS (Evitamos errores de puntero)
-LIBROS_DIR = "/home/edgar/blackhat_ai/docs"
-DB_DIR = "/home/edgar/blackhat_ai/db_vectorial"
+# --- CONFIGURACIÓN DE RUTAS RELATIVAS ---
+# Definimos la base como la carpeta raíz del proyecto (un nivel arriba de /scripts)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOCS_PATH = os.path.join(BASE_DIR, "docs")
+DB_PATH = os.path.join(BASE_DIR, "db_vectorial")
 
-# 1. Cargamos el motor de búsqueda (Embeddings)
-print("⏳ Cargando motor de búsqueda local...")
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    model_kwargs={'local_files_only': True}
-)
+def generar_base_datos():
+    print(f"🔍 Buscando manuales en: {DOCS_PATH}...")
+    
+    if not os.path.exists(DOCS_PATH) or not os.listdir(DOCS_PATH):
+        print("❌ Error: La carpeta 'docs' está vacía o no existe.")
+        return
 
-# 2. Leemos todos los manuales de la carpeta
-documentos = []
-for archivo in os.listdir(LIBROS_DIR):
-    if archivo.endswith(".pdf"):
-        print(f"📄 Procesando: {archivo}")
-        loader = PyMuPDFLoader(os.path.join(LIBROS_DIR, archivo))
-        documentos.extend(loader.load())
+    # 1. Cargador de Directorio (Busca todos los PDFs en /docs)
+    loader = DirectoryLoader(DOCS_PATH, glob="./*.pdf", loader_cls=PyPDFLoader)
+    documentos = loader.load()
+    print(f"📄 Se cargaron {len(documentos)} páginas de manuales.")
 
-# 3. Dividimos el texto respetando el contexto
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-fragmentos = text_splitter.split_documents(documentos)
+    # 2. Divisor de texto (Chunking)
+    # Ajustado para mantener el contexto técnico de los comandos
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+        add_start_index=True
+    )
+    fragmentos = text_splitter.split_documents(documentos)
+    print(f"✂️ Documentos divididos en {len(fragmentos)} fragmentos técnicos.")
 
-# 4. Creamos la base de datos local
-print(f"🧠 Indexando {len(fragmentos)} fragmentos en su 5600G...")
-vector_db = Chroma.from_documents(
-    documents=fragmentos, 
-    embedding=embeddings, 
-    persist_directory=DB_DIR
-)
-print("✅ ¡Vínculo completado! Su IA ya tiene acceso a los libros.")
+    # 3. Modelo de Embeddings (Carga Local para el Ryzen 5600G)
+    print("🧠 Generando vectores (esto puede tardar unos minutos)...")
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+        model_kwargs={'local_files_only': True}
+    )
+
+    # 4. Creación y Persistencia de la DB en /db_vectorial
+    vector_db = Chroma.from_documents(
+        documents=fragmentos,
+        embedding=embeddings,
+        persist_directory=DB_PATH
+    )
+    
+    print(f"✅ ¡Éxito! Base de datos creada y guardada en: {DB_PATH}")
+
+if __name__ == "__main__":
+    generar_base_datos()
