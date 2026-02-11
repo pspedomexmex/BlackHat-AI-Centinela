@@ -1,0 +1,5 @@
+langchain-ollama
+langchain-chroma
+langchain-huggingface
+sentence-transformers
+requests
