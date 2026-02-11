@@ -1,0 +1,12 @@
+# Base de Datos Vectorial (Fragmentos de libros)
+db_vectorial/
+
+# Manuales y PDF personales
+*.pdf
+docs/
+
+# Python y Entornos
+__pycache__/
+*.pyc
+.env
+venv/
