@@ -22,7 +22,7 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 # 3. Conexión a la Base de Datos Vectorial (36,140 Fragmentos)
-DB_PATH = "/home/edgar/blackhat_ai/db_vectorial"
+DB_PATH = "../db_vectorial"
 
 if not os.path.exists(DB_PATH):
     print(f"{C_INFO}❌ ERROR: No se encontró la base de datos en {DB_PATH}{C_RESET}")
