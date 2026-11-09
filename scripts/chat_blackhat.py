@@ -23,8 +23,9 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 
-# 3. Conexión a la Base de Datos Vectorial (36,140 Fragmentos)
-DB_PATH = "../db_vectorial"
+# 3. Conexión a la Base de Datos Vectorial
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(BASE_DIR, "db_vectorial")
 
 if not os.path.exists(DB_PATH):
     print(f"{C_INFO}❌ ERROR: No se encontró la base de datos en {DB_PATH}{C_RESET}")
