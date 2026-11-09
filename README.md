@@ -41,13 +41,15 @@ Se recomienda el uso de un entorno virtual (Conda o venv).
 
 
 
-#### 4. arga de Conocimiento (Indexación)
+#### 4. Carga de Conocimiento (Indexación)
 Para alimentar la base de datos con sus propios manuales:
 Coloque sus archivos PDF en la carpeta docs/.
 Ejecute el script procesador desde la raíz:
 
     python3 scripts/indexador_blackhat.py
 Esto generará la carpeta db_vectorial/ en la raíz del proyecto.
+
+> **Nota:** El primer arranque descarga el modelo de embeddings (~1 GB) desde HuggingFace. A partir de ahí queda en caché local y todo el sistema funciona 100% local y offline.
 
 
 ### 5. Ejecución del Auditor Centinela

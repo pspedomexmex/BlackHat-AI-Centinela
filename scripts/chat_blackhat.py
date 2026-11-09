@@ -16,9 +16,10 @@ C_RESET = "\033[0m"     # Reset de Color
 llm = OllamaLLM(model="phi3:mini", temperature=0)
 
 # 2. Motor de Embeddings (Carga Local)
+# Nota: el primer arranque descarga el modelo de embeddings (~1 GB) desde HuggingFace.
+# Despues queda en cache y el sistema funciona 100% local/offline.
 embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    model_kwargs={'local_files_only': True}
+    model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
 )
 
 

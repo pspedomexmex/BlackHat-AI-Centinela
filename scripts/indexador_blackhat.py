@@ -34,9 +34,10 @@ def generar_base_datos():
 
     # 3. Modelo de Embeddings (Carga Local para el Ryzen 5600G)
     print("🧠 Generando vectores (esto puede tardar unos minutos)...")
+    # Nota: el primer arranque descarga el modelo de embeddings (~1 GB) desde HuggingFace.
+    # Despues queda en cache y el sistema funciona 100% local/offline.
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-        model_kwargs={'local_files_only': True}
+        model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
     )
 
     # 4. Creación y Persistencia de la DB en /db_vectorial
