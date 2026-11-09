@@ -21,6 +21,7 @@ embeddings = HuggingFaceEmbeddings(
     model_kwargs={'local_files_only': True}
 )
 
+
 # 3. Conexión a la Base de Datos Vectorial (36,140 Fragmentos)
 DB_PATH = "../db_vectorial"
 
