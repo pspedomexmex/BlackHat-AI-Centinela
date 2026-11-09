@@ -1,5 +1,7 @@
 langchain-ollama
 langchain-chroma
 langchain-huggingface
+langchain-community
+langchain-text-splitters
+pypdf
 sentence-transformers
-requests
